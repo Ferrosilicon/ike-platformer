@@ -38,7 +38,7 @@ public class MyGdxGame extends ApplicationAdapter {
         // Initialize various objects
         batch = new SpriteBatch();
         mapWidth = map.getProperties().get("width", Integer.class);
-        renderer = new OrthogonalTiledMapRenderer(map, 1 / 32f);
+        renderer = new OrthogonalTiledMapRenderer(map, 1 / 32f); // 1 / 32f is the scale of the map; each tile is 32 pixels
         camera = new OrthographicCamera();
 
         // Setup camera's orthographic projection
@@ -65,9 +65,8 @@ public class MyGdxGame extends ApplicationAdapter {
 
         camera.position.x = playerX; // Update the camera x to the player's x
 
-        // Set up camera
-        camera.position.x = MathUtils.clamp(camera.position.x, camera.viewportWidth / 2f, mapWidth - (camera.viewportWidth / 2f));
-        camera.update();
+        camera.position.x = MathUtils.clamp(camera.position.x, camera.viewportWidth / 2f, mapWidth - (camera.viewportWidth / 2f)); // Clamps the camera to not go out-of-bounds
+        camera.update(); // Updated the camera with the new position
 
         renderer.setView(camera); // Make map renderer use camera projection
         renderer.render(); // Render the map
