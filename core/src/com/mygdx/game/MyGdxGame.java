@@ -16,6 +16,10 @@ import com.badlogic.gdx.math.MathUtils;
 public class MyGdxGame extends ApplicationAdapter {
 
     final float UNITS_SECOND = 7;
+    final float INITIAL_JUMP_VELOCITY = 16;
+    final float GRAVITATIONAL_ACCELERATION = 16;
+    boolean jump = false;
+    float deltaT = 0;
 
     SpriteBatch batch;
     OrthographicCamera camera;
@@ -56,6 +60,18 @@ public class MyGdxGame extends ApplicationAdapter {
             playerX += UNITS_SECOND * Gdx.graphics.getDeltaTime();
         if (Gdx.input.isKeyPressed(Input.Keys.A))
             playerX -= UNITS_SECOND * Gdx.graphics.getDeltaTime();
+        if (Gdx.input.isKeyPressed(Input.Keys.W))
+            jump = true;
+
+        if (jump) {
+            deltaT += Gdx.graphics.getDeltaTime();
+            playerY = INITIAL_JUMP_VELOCITY * deltaT - GRAVITATIONAL_ACCELERATION * deltaT * deltaT + 4;
+            if (playerY < 4) {
+                jump = false;
+                deltaT = 0;
+                playerY = 4;
+            }
+        }
 
         // Cap the min and max position of the player
         if (playerX < 0)
