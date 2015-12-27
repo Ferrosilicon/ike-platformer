@@ -10,19 +10,18 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.game.components.MovementComponent;
 import com.mygdx.game.components.PositionComponent;
+import com.mygdx.game.components.TextureComponent;
 import com.mygdx.game.systems.MovementSystem;
+import com.mygdx.game.systems.RenderSystem;
 
 public class GameScreen extends ScreenAdapter {
-
-    final float UNITS_SECOND = 7;
-    final float INITIAL_JUMP_VELOCITY = 16;
-    final float GRAVITATIONAL_ACCELERATION = 16;
 
     MyGdxGame game;
 
@@ -30,12 +29,6 @@ public class GameScreen extends ScreenAdapter {
     TiledMap map;
     OrthogonalTiledMapRenderer renderer;
     int mapWidth;
-
-    Texture playerTexture;
-    float playerX, playerY;
-    boolean jumping = false;
-    float deltaT = 0;
-
     PooledEngine engine = new PooledEngine(1,
             100,
             0,
@@ -43,10 +36,12 @@ public class GameScreen extends ScreenAdapter {
     Entity mainCharacter;
     MovementComponent movementComponent;
     PositionComponent positionComponent;
+    TextureComponent textureComponent;
 
     public GameScreen(MyGdxGame game) {
         this.game = game;
         engine.addSystem(new MovementSystem());
+        engine.addSystem(new RenderSystem(game.batch));
         initiatePlayer();
         initiateTiledMap();
         initiateCamera();
@@ -56,8 +51,11 @@ public class GameScreen extends ScreenAdapter {
     private void initiatePlayer() {
 //        playerX = 0;
 //        playerY = 4;
-//        playerTexture = new Texture(Gdx.files.internal("player.png"));
         mainCharacter = engine.createEntity();
+
+        mainCharacter.add(new TextureComponent());
+        textureComponent = mainCharacter.getComponent(TextureComponent.class);
+        textureComponent.textureRegion = new TextureRegion(new Texture(Gdx.files.internal("player.png")));
 
         mainCharacter.add(new PositionComponent());
         positionComponent = mainCharacter.getComponent(PositionComponent.class);
@@ -66,6 +64,7 @@ public class GameScreen extends ScreenAdapter {
         mainCharacter.add(new MovementComponent());
         movementComponent = mainCharacter.getComponent(MovementComponent.class);
         movementComponent.acceleration.add(0, -16);
+        engine.addEntity(mainCharacter);
     }
 
     private void initiateTiledMap() {
@@ -87,44 +86,31 @@ public class GameScreen extends ScreenAdapter {
     @Override
     public void render(final float delta) {
         updateVectors(delta);
-        engine.update(delta);
+
         updateCamera();
         updateRender();
+        game.batch.begin();
+        engine.update(delta);
+        game.batch.end();
+
     }
 
     private void updateVectors(final float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.D))
-            movementComponent.velocity.set(7,0);
+            movementComponent.velocity.x = 7;
         else if (Gdx.input.isKeyPressed(Input.Keys.A))
-            movementComponent.velocity.set(-7,0);
+            movementComponent.velocity.x = -7;
         else
-            movementComponent.velocity.set(0, 0);
+            movementComponent.velocity.x = 0;
 
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            movementComponent.velocity.add(0, 16);
+            movementComponent.velocity.y = 16;
             movementComponent.jumping = true;
         }
-//        if (Gdx.input.isKeyPressed(Input.Keys.W))
-//            jumping = true;
-//
-//        if (jumping) {
-//            deltaT += delta;
-//            playerY = INITIAL_JUMP_VELOCITY * deltaT - GRAVITATIONAL_ACCELERATION * deltaT * deltaT + 4;
-//            if (playerY < 4) {
-//                jumping = false;
-//                deltaT = 0;
-//                playerY = 4;
-//            }
-//        }
-
-//        if (playerX < 0)
-//            playerX = 0;
-//        else if (playerX > mapWidth - 1)
-//            playerX = mapWidth - 1;
     }
 
     private void updateCamera() {
-        camera.position.x = MathUtils.clamp(playerX, camera.viewportWidth / 2f, mapWidth - (camera.viewportWidth / 2f));
+        camera.position.x = MathUtils.clamp(positionComponent.position.x, camera.viewportWidth / 2f, mapWidth - (camera.viewportWidth / 2f));
         camera.update();
     }
 
@@ -134,8 +120,5 @@ public class GameScreen extends ScreenAdapter {
         renderer.render();
 
         game.batch.setProjectionMatrix(camera.combined);
-        game.batch.begin();
-        game.batch.draw(playerTexture, playerX, playerY, 1, 2);
-        game.batch.end();
     }
 }

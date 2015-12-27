@@ -22,7 +22,7 @@ public class MovementSystem extends EntitySystem {
 
     public MovementSystem() {}
 
-    int deltaT = 0;
+    float deltaT = 0;
 
     public void addedToEngine(Engine engine) {
         entities = engine.getEntitiesFor(Family.all(PositionComponent.class, MovementComponent.class).get());
@@ -34,11 +34,12 @@ public class MovementSystem extends EntitySystem {
             PositionComponent position = pm.get(entity);
             MovementComponent movement = mm.get(entity);
 
+
             position.position.x += movement.velocity.x * deltaTime;
 
             if (movement.jumping) {
                 deltaT += deltaTime;
-                position.position.y = movement.velocity.y * deltaT - movement.acceleration.y * deltaT * deltaT + 4;
+                position.position.y = movement.velocity.y * deltaT + movement.acceleration.y * deltaT * deltaT + 4;
                if (position.position.y < 4) {
                     movement.jumping = false;
                     deltaT = 0;
