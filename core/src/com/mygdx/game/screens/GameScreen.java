@@ -1,6 +1,5 @@
-package com.mygdx.game;
+package com.mygdx.game.screens;
 
-import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.badlogic.gdx.Gdx;
@@ -15,6 +14,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.components.MovementComponent;
 import com.mygdx.game.components.PositionComponent;
 import com.mygdx.game.components.TextureComponent;
@@ -24,33 +24,33 @@ import com.mygdx.game.systems.RenderSystem;
 public class GameScreen extends ScreenAdapter {
 
     MyGdxGame game;
-
-    OrthographicCamera camera;
-    TiledMap map;
-    OrthogonalTiledMapRenderer renderer;
-    int mapWidth;
-    PooledEngine engine = new PooledEngine(1,
-            100,
-            0,
-            5);
-    Entity mainCharacter;
+    PooledEngine engine;
     MovementComponent movementComponent;
     PositionComponent positionComponent;
     TextureComponent textureComponent;
+    Entity mainCharacter;
+    TiledMap map;
+    int mapWidth;
+    OrthogonalTiledMapRenderer renderer;
+    OrthographicCamera camera;
 
     public GameScreen(MyGdxGame game) {
         this.game = game;
-        engine.addSystem(new MovementSystem());
-        engine.addSystem(new RenderSystem(game.batch));
+
+        initiateEngine();
         initiatePlayer();
         initiateTiledMap();
         initiateCamera();
         initiateRender();
     }
 
+    private void initiateEngine() {
+        engine = new PooledEngine(1, 100, 0, 5);
+        engine.addSystem(new MovementSystem());
+        engine.addSystem(new RenderSystem(game.batch));
+    }
+
     private void initiatePlayer() {
-//        playerX = 0;
-//        playerY = 4;
         mainCharacter = engine.createEntity();
 
         mainCharacter.add(new TextureComponent());
@@ -64,6 +64,7 @@ public class GameScreen extends ScreenAdapter {
         mainCharacter.add(new MovementComponent());
         movementComponent = mainCharacter.getComponent(MovementComponent.class);
         movementComponent.acceleration.add(0, -16);
+
         engine.addEntity(mainCharacter);
     }
 
@@ -85,8 +86,7 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(final float delta) {
-        updateVectors(delta);
-
+        updateInput();
         updateCamera();
         updateRender();
         game.batch.begin();
@@ -95,7 +95,7 @@ public class GameScreen extends ScreenAdapter {
 
     }
 
-    private void updateVectors(final float delta) {
+    private void updateInput() {
         if (Gdx.input.isKeyPressed(Input.Keys.D))
             movementComponent.velocity.x = 7;
         else if (Gdx.input.isKeyPressed(Input.Keys.A))
@@ -118,7 +118,6 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderer.setView(camera);
         renderer.render();
-
         game.batch.setProjectionMatrix(camera.combined);
     }
 }
