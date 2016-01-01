@@ -11,7 +11,7 @@ public class MainMenuScreen extends ScreenAdapter {
     MyGdxGame game;
     OrthographicCamera camera;
 
-    public MainMenuScreen(final MyGdxGame game) {
+    public MainMenuScreen(MyGdxGame game) {
         this.game = game;
 
         initiateCamera();
@@ -19,7 +19,7 @@ public class MainMenuScreen extends ScreenAdapter {
 
     private void initiateCamera() {
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
+        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     @Override

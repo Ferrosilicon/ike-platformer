@@ -9,4 +9,9 @@ public class MovementComponent implements Component {
     public Vector2 acceleration = new Vector2(0, 0);
     public boolean jumping = false;
     public float deltaT;
+
+    public MovementComponent(Vector2 velocity, Vector2 acceleration) {
+        this.velocity = velocity;
+        this.acceleration = acceleration;
+    }
 }
