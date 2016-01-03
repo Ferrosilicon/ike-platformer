@@ -22,16 +22,16 @@ public class GameScreen extends ScreenAdapter {
 
     public MyGdxGame game;
     public OrthographicCamera camera;
-    public Entity mainCharacter;
+    public Entity player;
     public Level level;
-
-    private PooledEngine engine;
+    public Texture entitiesTexture;
+    public PooledEngine engine;
 
     public GameScreen(MyGdxGame game) {
         this.game = game;
 
+        initiateTextures();
         initiateEngine();
-        initiatePlayer();
         initiateCamera();
         initiateRender();
 
@@ -44,14 +44,6 @@ public class GameScreen extends ScreenAdapter {
         engine.addSystem(new RenderSystem(game.batch));
     }
 
-    private void initiatePlayer() {
-        mainCharacter = engine.createEntity();
-        mainCharacter.add(new TextureComponent(new TextureRegion(new Texture(Gdx.files.internal("player.png")))));
-        mainCharacter.add(new PositionComponent(new Vector2(0, 4)));
-        mainCharacter.add(new MovementComponent(new Vector2(0, 0), new Vector2(0, -16)));
-        engine.addEntity(mainCharacter);
-    }
-
     private void initiateCamera() {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 32, 18);
@@ -59,7 +51,11 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void initiateRender() {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(255, 255, 255, 1);
+    }
+
+    private void initiateTextures() {
+        entitiesTexture = new Texture(Gdx.files.internal("entities.png"));
     }
 
     public void loadLevel(String name) {
@@ -77,7 +73,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void updateInput() {
-        MovementComponent movement = mainCharacter.getComponent(MovementComponent.class);
+        MovementComponent movement = player.getComponent(MovementComponent.class);
         if (Gdx.input.isKeyPressed(Input.Keys.D))
             movement.velocity.x = 7;
         else if (Gdx.input.isKeyPressed(Input.Keys.A))
@@ -91,8 +87,8 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void updateCamera() {
-        camera.position.x = MathUtils.clamp(mainCharacter.getComponent(PositionComponent.class).position.x,
-                camera.viewportWidth / 2f, level.map.getProperties().get("width", Integer.class) - (camera.viewportWidth / 2f));
+        camera.position.x = MathUtils.clamp(player.getComponent(PositionComponent.class).position.x,
+                camera.viewportWidth / 2f, level.mapWidth - (camera.viewportWidth / 2f));
         camera.update();
     }
 }
