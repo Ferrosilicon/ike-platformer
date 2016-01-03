@@ -17,10 +17,10 @@ import com.mygdx.game.screens.GameScreen;
 
 public class Level {
 
-    GameScreen gameScreen;
-    OrthogonalTiledMapRenderer renderer;
     public int mapWidth;
     public TiledMap map;
+    GameScreen gameScreen;
+    OrthogonalTiledMapRenderer renderer;
 
     public Level(GameScreen gameScreen, String name) {
         this.gameScreen = gameScreen;
@@ -49,7 +49,7 @@ public class Level {
         Entity player = gameScreen.engine.createEntity();
         player.add(new TextureComponent(new TextureRegion(gameScreen.entitiesTexture, 0, 0, 32, 64)));
         player.add(new PositionComponent(position));
-        player.add(new MovementComponent(new Vector2(0, 0), new Vector2(0, -16)));
+        player.add(new MovementComponent());
         gameScreen.player = player;
         gameScreen.engine.addEntity(player);
     }
@@ -58,10 +58,7 @@ public class Level {
         Entity enemy = gameScreen.engine.createEntity();
         enemy.add(new TextureComponent(new TextureRegion(gameScreen.entitiesTexture, 32, 0, 32, 64)));
         enemy.add(new PositionComponent(position));
-        MovementComponent movementComponent = new MovementComponent(new Vector2(0, 0), new Vector2(0, -16));
-        movementComponent.velocity.y = 16;
-        movementComponent.alwaysJumping = true;
-        enemy.add(movementComponent);
+        enemy.add(new MovementComponent(new Vector2(0, 16), new Vector2(0, -16), true));
         gameScreen.engine.addEntity(enemy);
     }
 

@@ -7,14 +7,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.Level;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.components.MovementComponent;
 import com.mygdx.game.components.PositionComponent;
-import com.mygdx.game.components.TextureComponent;
 import com.mygdx.game.systems.MovementSystem;
 import com.mygdx.game.systems.RenderSystem;
 
