@@ -20,17 +20,15 @@ public class MovementSystem extends EntitySystem {
     }
 
     public void update(float deltaTime) {
-        for (int i = 0; i < entities.size(); ++i) {
-            Entity entity = entities.get(i);
+        for (Entity entity : entities) {
             MovementComponent movement = mm.get(entity);
             PositionComponent position = pm.get(entity);
             position.position.x += movement.velocity.x * deltaTime;
-
-            if (movement.jumping) {
+            if (movement.jumping || movement.alwaysJumping) {
                 movement.deltaT += deltaTime;
                 position.position.y = movement.velocity.y * movement.deltaT + movement.acceleration.y * movement.deltaT * movement.deltaT + 4;
                 if (position.position.y < 4) {
-                    movement.jumping = false;
+                    movement.jumping = movement.alwaysJumping;
                     movement.deltaT = 0;
                     position.position.y = 4;
                 }
