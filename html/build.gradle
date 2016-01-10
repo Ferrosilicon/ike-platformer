@@ -7,8 +7,8 @@ gwt {
     minHeapSize="1G"
 
     src = files(file("src/")) // Needs to be in front of "modules" below.
-    modules 'com.mygdx.game.GdxDefinition'
-    devModules 'com.mygdx.game.GdxDefinitionSuperdev'
+    modules 'com.github.ferrosilicon.ike.GdxDefinition'
+    devModules 'com.github.ferrosilicon.ike.GdxDefinitionSuperdev'
     project.webAppDirName = 'webapp'
 
     compiler {
