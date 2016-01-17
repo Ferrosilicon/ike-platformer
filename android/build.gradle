@@ -1,5 +1,5 @@
 android {
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
     compileSdkVersion 23
     sourceSets {
         main {
@@ -13,6 +13,11 @@ android {
         }
 
         instrumentTest.setRoot('tests')
+    }
+    defaultConfig {
+        applicationId "com.github.ferrosilicon.ike"
+        minSdkVersion 8
+        targetSdkVersion 23
     }
 }
 
@@ -59,7 +64,7 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.mygdx.game.android/com.mygdx.game.android.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.github.ferrosilicon.ike/com.github.ferrosilicon.ike.AndroidLauncher'
 }
 
 // sets up the Android Eclipse project, using the old Ant based build.
