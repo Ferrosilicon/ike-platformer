@@ -1,4 +1,4 @@
-package com.github.ferrosilicon.ike.model;
+package com.github.ferrosilicon.ike.world;
 
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.OrthographicCamera;

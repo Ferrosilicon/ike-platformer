@@ -1,4 +1,4 @@
-package com.github.ferrosilicon.ike.model;
+package com.github.ferrosilicon.ike.util;
 
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapObject;

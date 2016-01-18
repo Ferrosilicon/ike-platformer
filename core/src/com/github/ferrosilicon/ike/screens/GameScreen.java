@@ -1,4 +1,4 @@
-package com.github.ferrosilicon.ike;
+package com.github.ferrosilicon.ike.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -8,8 +8,9 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.github.ferrosilicon.ike.model.Level;
-import com.github.ferrosilicon.ike.model.WorldManager;
+import com.github.ferrosilicon.ike.IkeGame;
+import com.github.ferrosilicon.ike.world.Level;
+import com.github.ferrosilicon.ike.world.WorldManager;
 
 public final class GameScreen extends ScreenAdapter {
 

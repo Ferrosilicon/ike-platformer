@@ -1,4 +1,4 @@
-package com.github.ferrosilicon.ike.model;
+package com.github.ferrosilicon.ike.world;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
+import com.github.ferrosilicon.ike.util.MapBodyBuilder;
 
 public final class WorldManager implements Disposable {
 
