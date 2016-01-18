@@ -58,7 +58,7 @@ public final class WorldManager implements Disposable {
         final FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = groundBox;
         fixtureDef.density = 0.5f;
-        fixtureDef.friction = 0.8f;
+        fixtureDef.friction = 0.9f;
         fixtureDef.restitution = 0.2f;
         body.createFixture(fixtureDef);
 

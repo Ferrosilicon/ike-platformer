@@ -1,14 +1,18 @@
 package com.github.ferrosilicon.ike;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.github.ferrosilicon.ike.model.Level;
 import com.github.ferrosilicon.ike.model.WorldManager;
 
 public final class GameScreen extends ScreenAdapter {
+
+    private static final int MAX_VELOCITY = 3;
 
     private final IkeGame game;
 
@@ -38,6 +42,22 @@ public final class GameScreen extends ScreenAdapter {
         camera.position.x = MathUtils.clamp(worldManager.player.getPosition().x,
                 camera.viewportWidth / 2f, level.mapWidth - (camera.viewportWidth / 2f));
         level.render(camera);
+        Vector2 vel = worldManager.player.getLinearVelocity();
+        Vector2 pos = worldManager.player.getPosition();
+
+// apply left impulse, but only if max velocity is not reached yet
+        if (Gdx.input.isKeyPressed(Input.Keys.A) && vel.x > -MAX_VELOCITY) {
+            worldManager.player.applyLinearImpulse(-0.80f, 0, pos.x, pos.y, true);
+        }
+
+// apply right impulse, but only if max velocity is not reached yet
+        if (Gdx.input.isKeyPressed(Input.Keys.D) && vel.x < MAX_VELOCITY) {
+            worldManager.player.applyLinearImpulse(0.80f, 0, pos.x, pos.y, true);
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.W) && vel.x < MAX_VELOCITY) {
+            worldManager.player.applyLinearImpulse(0, 0.80f, pos.x, pos.y, true);
+        }
         worldManager.step(deltaTime, camera);
     }
 
