@@ -1,4 +1,4 @@
-package com.github.ferrosilicon.ike.util;
+package com.github.ferrosilicon.ike.world.util;
 
 import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapObject;
@@ -22,7 +22,7 @@ import com.badlogic.gdx.utils.Array;
 
 // I found this bad boy on stackoverflow. I haven't changed a single line of it yet, and it could
 // definitely use some cleaning up.
-public class MapBodyBuilder {
+public class WorldBuilder {
 
     private static float ppt = 0;
 

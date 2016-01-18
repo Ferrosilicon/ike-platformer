@@ -1,6 +1,10 @@
 package com.github.ferrosilicon.ike.world;
 
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -9,7 +13,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
-import com.github.ferrosilicon.ike.util.MapBodyBuilder;
+import com.github.ferrosilicon.ike.world.util.WorldBuilder;
 
 public final class WorldManager implements Disposable {
 
@@ -17,27 +21,36 @@ public final class WorldManager implements Disposable {
 
     private static final int VELOCITY_ITERATIONS = 8;
     private static final int POSITION_ITERATIONS = 3;
-
-    private static final boolean DEBUG_RENDER = true;
-
+    public final TiledMap map;
+    public final int mapTileSize;
+    public final int mapWidth;
     private final World world;
     private final Box2DDebugRenderer debugRenderer;
+    private final OrthogonalTiledMapRenderer tiledMapRenderer;
+
     public Body player;
     private float stepAccumulator;
 
-    public WorldManager() {
+    public WorldManager(final String level) {
         world = new World(new Vector2(0, -9.80665f), true);
         debugRenderer = new Box2DDebugRenderer();
+
+        map = new TmxMapLoader(new InternalFileHandleResolver()).load(level);
+        mapTileSize = map.getProperties().get("tilewidth", Integer.class);
+        mapWidth = map.getProperties().get("width", Integer.class);
+
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(map, 1f / mapTileSize);
+
+        WorldBuilder.buildShapes(map, mapTileSize, world);
     }
 
-    // TODO: Need to remove all previous bodies
-    public void createLevel(final Level level) {
-        MapBodyBuilder.buildShapes(level.tiledMap, level.tileSize, world);
+    public void render(final OrthographicCamera camera) {
+        tiledMapRenderer.setView(camera);
+        tiledMapRenderer.render();
     }
 
     public void step(final float deltaTime, final OrthographicCamera camera) {
-        if (DEBUG_RENDER)
-            debugRenderer.render(world, camera.combined);
+        debugRenderer.render(world, camera.combined);
 
         stepAccumulator += Math.min(deltaTime, 0.25f);
         while (stepAccumulator >= TIME_STEP) {
@@ -71,5 +84,7 @@ public final class WorldManager implements Disposable {
     public void dispose() {
         world.dispose();
         debugRenderer.dispose();
+        map.dispose();
+        tiledMapRenderer.dispose();
     }
 }

@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.github.ferrosilicon.ike.IkeGame;
-import com.github.ferrosilicon.ike.world.Level;
 import com.github.ferrosilicon.ike.world.WorldManager;
 
 public final class GameScreen extends ScreenAdapter {
@@ -19,21 +18,17 @@ public final class GameScreen extends ScreenAdapter {
     private final IkeGame game;
 
     private final WorldManager worldManager;
-    private final Level level;
     private final OrthographicCamera camera;
 
     public GameScreen(final IkeGame game) {
         this.game = game;
 
-        level = new Level("test_map.tmx");
-
-        worldManager = new WorldManager();
-        worldManager.createLevel(level);
+        worldManager = new WorldManager("test_map.tmx");
         worldManager.createPlayer(1.5f, 5.5f);
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth() / level.tileSize / 2,
-                Gdx.graphics.getHeight() / level.tileSize / 2);
+        camera.setToOrtho(false, Gdx.graphics.getWidth() / worldManager.mapTileSize / 2,
+                Gdx.graphics.getHeight() / worldManager.mapTileSize / 2);
         camera.update();
     }
 
@@ -42,9 +37,9 @@ public final class GameScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.position.x = MathUtils.clamp(worldManager.player.getPosition().x,
-                camera.viewportWidth / 2f, level.mapWidth - (camera.viewportWidth / 2f));
+                camera.viewportWidth / 2f, worldManager.mapWidth - (camera.viewportWidth / 2f));
         camera.update();
-        level.render(camera);
+        worldManager.render(camera);
 
         updateInput();
         worldManager.step(deltaTime, camera);
@@ -69,6 +64,5 @@ public final class GameScreen extends ScreenAdapter {
     @Override
     public void dispose() {
         worldManager.dispose();
-        level.dispose();
     }
 }
