@@ -43,6 +43,8 @@ public final class GameScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.position.x = MathUtils.clamp(worldManager.player.getPosition().x,
                 camera.viewportWidth / 2f, level.mapWidth - (camera.viewportWidth / 2f));
+        camera.update();
+        System.out.println(worldManager.player.getPosition().x + " " + camera.position.x + " " +camera.viewportWidth / 2f + " " + (level.mapWidth - (camera.viewportWidth / 2f)));
         level.render(camera);
 
         updateInput();
