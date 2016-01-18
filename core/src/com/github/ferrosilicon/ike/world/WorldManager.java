@@ -77,6 +77,8 @@ public final class WorldManager implements Disposable {
         body.createFixture(fixtureDef);
 
         groundBox.dispose();
+
+        body.setUserData(new Character());
         player = body;
     }
 
