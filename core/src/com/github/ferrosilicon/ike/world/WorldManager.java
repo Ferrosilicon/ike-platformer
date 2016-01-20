@@ -21,11 +21,14 @@ public final class WorldManager implements Disposable {
 
     private static final int VELOCITY_ITERATIONS = 8;
     private static final int POSITION_ITERATIONS = 3;
+
     public final TiledMap map;
     public final int mapTileSize;
     public final int mapWidth;
+
     private final World world;
     private final Box2DDebugRenderer debugRenderer;
+
     private final OrthogonalTiledMapRenderer tiledMapRenderer;
 
     public Body player;
