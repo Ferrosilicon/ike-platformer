@@ -63,6 +63,7 @@ public final class WorldManager implements Disposable {
         final BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(x, y);
+        bodyDef.fixedRotation = true;
 
         final Body body = world.createBody(bodyDef);
         final PolygonShape groundBox = new PolygonShape();

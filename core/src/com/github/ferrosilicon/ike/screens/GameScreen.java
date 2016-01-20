@@ -50,6 +50,7 @@ public final class GameScreen extends ScreenAdapter {
         final Vector2 vel = player.getLinearVelocity();
         final Vector2 pos = player.getPosition();
 
+        System.out.println(vel);
         if (Gdx.input.isKeyPressed(Input.Keys.A) && vel.x > -MAX_VELOCITY.x)
             player.applyLinearImpulse(-0.80f, 0, pos.x, pos.y, true);
         if (Gdx.input.isKeyPressed(Input.Keys.D) && vel.x < MAX_VELOCITY.x)
