@@ -18,11 +18,11 @@ import com.github.ferrosilicon.ike.world.util.WorldBuilder;
 public final class WorldManager implements Disposable {
 
     // The amount of updates per second
-    private static final float TIME_STEP = 1 / 45f;
+    private static final float TIME_STEP = 1 / 300f;
 
     // Two performance variables that you don't need to worry about
-    private static final int VELOCITY_ITERATIONS = 8;
-    private static final int POSITION_ITERATIONS = 3;
+    private static final int VELOCITY_ITERATIONS = 16;
+    private static final int POSITION_ITERATIONS = 6;
 
     public final TiledMap map;
     public final int mapTileSize;
