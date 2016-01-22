@@ -85,15 +85,14 @@ public final class WorldManager implements Disposable {
         // Create a 1x1 unit rectangle, as the parameters are half of the actual values. (1/2 = 1)
         // One unit = WorldManager.mapTileSize;
         groundBox.setAsBox(0.5f, 0.5f);
-        // Creates a new fixture for the body and gives it the specified density (0.5)
-        body.createFixture(groundBox, 0.5f);
 
         // Creates a new definition for the fixture
         final FixtureDef fixtureDef = new FixtureDef();
         // Gives the definition the shape we created
         fixtureDef.shape = groundBox;
-        // Gives the definition a friction value of 0.9. The value should be between 0 and 1
-        fixtureDef.friction = 0.9f;
+        // Gives the definition a friction value of 0.3. The value should be between 0 and 1
+        fixtureDef.friction = 0.3f;
+        fixtureDef.density = 0.5f;
         // Creates a new fixture with the fixture definition
         body.createFixture(fixtureDef);
 
