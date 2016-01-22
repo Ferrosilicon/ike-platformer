@@ -1,9 +1,10 @@
-package com.github.ferrosilicon.ike;
+package com.github.ferrosilicon.ike.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.github.ferrosilicon.ike.IkeGame;
 
 public final class MainMenuScreen extends ScreenAdapter {
 

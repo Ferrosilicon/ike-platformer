@@ -3,6 +3,7 @@ package com.github.ferrosilicon.ike;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.github.ferrosilicon.ike.screens.MainMenuScreen;
 
 public final class IkeGame extends Game {
 
