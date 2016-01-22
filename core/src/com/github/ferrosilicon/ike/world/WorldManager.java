@@ -17,8 +17,10 @@ import com.github.ferrosilicon.ike.world.util.WorldBuilder;
 
 public final class WorldManager implements Disposable {
 
+    // The amount of updates per second
     private static final float TIME_STEP = 1 / 45f;
 
+    // Two performance variables that you don't need to worry about
     private static final int VELOCITY_ITERATIONS = 8;
     private static final int POSITION_ITERATIONS = 3;
 
@@ -35,6 +37,8 @@ public final class WorldManager implements Disposable {
     private float stepAccumulator;
 
     public WorldManager(final String level) {
+        // Create a new world instance with the specified gravity and with body sleeping enabled
+        // Body sleeping saves CPU on bodies that have no forces acting upon them
         world = new World(new Vector2(0, -9.80665f), true);
         debugRenderer = new Box2DDebugRenderer();
 
@@ -44,6 +48,7 @@ public final class WorldManager implements Disposable {
 
         tiledMapRenderer = new OrthogonalTiledMapRenderer(map, 1f / mapTileSize);
 
+        // Create Box2d bodies to represent the Tiled map
         WorldBuilder.buildShapes(map, mapTileSize, world);
     }
 
@@ -52,6 +57,7 @@ public final class WorldManager implements Disposable {
         tiledMapRenderer.render();
     }
 
+    // All you need to know about this is that it updates the Box2d world. Don't worry about how
     public void step(final float deltaTime, final OrthographicCamera camera) {
         debugRenderer.render(world, camera.combined);
 
@@ -63,25 +69,41 @@ public final class WorldManager implements Disposable {
     }
 
     public void createPlayer(final float x, final float y) {
+        // Create a new body definition
         final BodyDef bodyDef = new BodyDef();
+        // Sets the body type to dynamic. Dynamic bodies are affected by forces and gravity
         bodyDef.type = BodyDef.BodyType.DynamicBody;
+        // Sets the position of the body
         bodyDef.position.set(x, y);
+        // Makes the body unable to rotate, so if you clip the side of a wall the body won't flip
         bodyDef.fixedRotation = true;
 
+        // Create a new body using the body definition
         final Body body = world.createBody(bodyDef);
+        // Creates a new polygon shape to give the body. Other shapes are circle, edge, and chain.
         final PolygonShape groundBox = new PolygonShape();
+        // Create a 1x1 unit rectangle, as the parameters are half of the actual values. (1/2 = 1)
+        // One unit = WorldManager.mapTileSize;
         groundBox.setAsBox(0.5f, 0.5f);
-        body.createFixture(groundBox, 0.0f);
+        // Creates a new fixture for the body and gives it the specified density (0.5)
+        body.createFixture(groundBox, 0.5f);
 
+        // Creates a new definition for the fixture
         final FixtureDef fixtureDef = new FixtureDef();
+        // Gives the definition the shape we created
         fixtureDef.shape = groundBox;
-        fixtureDef.density = 0.5f;
+        // Gives the definition a friction value of 0.9. The value should be between 0 and 1
         fixtureDef.friction = 0.9f;
+        // Creates a new fixture with the fixture definition
         body.createFixture(fixtureDef);
 
+        // A fixture was already created with the shape, so the shape can now be removed from mem
         groundBox.dispose();
 
+        // Attaches an object to the body which we can use later. Currently has no use, but later
+        // it will be used to hold things such as the health of the entity
         body.setUserData(new Character());
+        // Sets the player field to the body we just created for easier access
         player = body;
     }
 
