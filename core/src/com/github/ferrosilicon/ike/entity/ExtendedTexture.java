@@ -35,16 +35,16 @@ public class ExtendedTexture {
         int renderFrame = (int) Math.floor(frames / (renderTime / renderProgress));
 
 
-        final int directionModifier;
+        final boolean directionModifier;
         switch (dirState) {
             case RIGHT:
-                directionModifier = 1;
+                directionModifier = false;
                 break;
             case LEFT:
-                directionModifier = -1;
+                directionModifier = true;
                 break;
             default:
-                directionModifier = 1;
+                directionModifier = false;
         }
 
         if (renderFrame == frames){
@@ -53,13 +53,15 @@ public class ExtendedTexture {
         }
 
 
-        TextureRegion outputTexture = new TextureRegion(texture,renderFrame*(int)dimension.x,0,(int)dimension.x*directionModifier,(int)dimension.y);
+        TextureRegion outputTexture = new TextureRegion(texture,renderFrame*(int)dimension.x,0,(int)dimension.x,(int)dimension.y);
+        outputTexture.flip(directionModifier,false);
 
         if(!rendering)
             renderProgress = 0;
 
 
-        return outputTexture;/*
+        return outputTexture;
+        /*
         Texture o = new Texture(Gdx.files.internal("IkeStatic.png"));
         TextureRegion region = new TextureRegion(o,0,0,dimension.x,dimension.y);
         return region;*/
