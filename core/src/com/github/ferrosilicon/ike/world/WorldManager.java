@@ -13,6 +13,9 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
+import com.github.ferrosilicon.ike.entity.CharacterTextureSet;
+import com.github.ferrosilicon.ike.entity.ExtendedTexture;
+import com.github.ferrosilicon.ike.entity.Ike;
 import com.github.ferrosilicon.ike.world.util.WorldBuilder;
 
 public final class WorldManager implements Disposable {
@@ -98,10 +101,12 @@ public final class WorldManager implements Disposable {
 
         // A fixture was already created with the shape, so the shape can now be removed from mem
         groundBox.dispose();
-
+        CharacterTextureSet ikeTextures = new CharacterTextureSet();
+        ikeTextures.standingTexture = new ExtendedTexture("IkeStatic.png",1,new Vector2(64,64),0.1f);
+        ikeTextures.walkingTexture = new ExtendedTexture("minion_death.png",3,new Vector2(32,32),0.9f);
         // Attaches an object to the body which we can use later. Currently has no use, but later
         // it will be used to hold things such as the health of the entity
-        body.setUserData(new Character());
+        body.setUserData(new Ike(ikeTextures));
         // Sets the player field to the body we just created for easier access
         player = body;
     }
