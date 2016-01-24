@@ -9,6 +9,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.github.ferrosilicon.ike.IkeGame;
+import com.github.ferrosilicon.ike.entity.Character;
+import com.github.ferrosilicon.ike.entity.Entity;
+import com.github.ferrosilicon.ike.entity.Ike;
 import com.github.ferrosilicon.ike.world.WorldManager;
 
 public final class GameScreen extends ScreenAdapter {
@@ -40,25 +43,51 @@ public final class GameScreen extends ScreenAdapter {
                 camera.viewportWidth / 2f, worldManager.mapWidth - (camera.viewportWidth / 2f));
         camera.update();
         worldManager.render(camera);
-
+        renderEntity( worldManager.player , deltaTime );
         updateInput();
         worldManager.step(deltaTime, camera);
     }
 
     private void updateInput() {
         final Body player = worldManager.player;
+        Ike playerData = (Ike) player.getUserData();
         final Vector2 vel = player.getLinearVelocity();
         final Vector2 pos = player.getPosition();
 
         System.out.println(vel);
-        if (Gdx.input.isKeyPressed(Input.Keys.A) && vel.x > -MAX_VELOCITY.x)
-            player.applyLinearImpulse(-0.80f, 0, pos.x, pos.y, true);
-        if (Gdx.input.isKeyPressed(Input.Keys.D) && vel.x < MAX_VELOCITY.x)
-            player.applyLinearImpulse(0.80f, 0, pos.x, pos.y, true);
-        if (Gdx.input.isKeyPressed(Input.Keys.W) && vel.y < MAX_VELOCITY.y
-                && Math.abs(vel.y) < 0.005)
-            player.applyLinearImpulse(0, 4f, pos.x, pos.y, true);
+
+        playerData.setCharacterState(Character.CharacterState.STANDING);
+
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            playerData.setCharacterState(Character.CharacterState.RUNNING);
+            playerData.directionState = Entity.DirectionState.LEFT;
+            if( vel.x > -MAX_VELOCITY.x)
+                player.applyLinearImpulse(-0.80f, 0, pos.x, pos.y, true);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            playerData.setCharacterState(Character.CharacterState.RUNNING);
+            playerData.directionState = Entity.DirectionState.RIGHT;
+            if( vel.x < MAX_VELOCITY.x)
+                player.applyLinearImpulse(0.80f, 0, pos.x, pos.y, true);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            playerData.setCharacterState(Character.CharacterState.JUMPING);
+            if( vel.y < MAX_VELOCITY.y && Math.abs(vel.y) < 0.005)
+                player.applyLinearImpulse(0, 4f, pos.x, pos.y, true);
+        }
+
+
     }
+    private void renderEntity(Body item,float deltaTime){
+        Entity entity = (Entity) item.getUserData();
+        Vector2 entityPos = entity.getPixelPosition( item.getPosition() , camera, worldManager.mapTileSize);
+
+        game.batch.begin();
+        game.batch.draw(entity.getCurrentSprite(deltaTime),entityPos.x,entityPos.y,(int)entity.dimension.x,(int)entity.dimension.y);
+        game.batch.end();
+    }
+
+
 
     @Override
     public void dispose() {
