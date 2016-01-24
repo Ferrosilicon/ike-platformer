@@ -58,21 +58,24 @@ public final class GameScreen extends ScreenAdapter {
 
         playerData.setCharacterState(Character.CharacterState.STANDING);
 
-        if (Gdx.input.isKeyPressed(Input.Keys.A) && vel.x > -MAX_VELOCITY.x) {
-            player.applyLinearImpulse(-0.80f, 0, pos.x, pos.y, true);
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             playerData.setCharacterState(Character.CharacterState.RUNNING);
             playerData.directionState = Entity.DirectionState.LEFT;
+            if( vel.x > -MAX_VELOCITY.x)
+                player.applyLinearImpulse(-0.80f, 0, pos.x, pos.y, true);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.D) && vel.x < MAX_VELOCITY.x) {
-            player.applyLinearImpulse(0.80f, 0, pos.x, pos.y, true);
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             playerData.setCharacterState(Character.CharacterState.RUNNING);
             playerData.directionState = Entity.DirectionState.RIGHT;
+            if( vel.x < MAX_VELOCITY.x)
+                player.applyLinearImpulse(0.80f, 0, pos.x, pos.y, true);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.W) && vel.y < MAX_VELOCITY.y
-                && Math.abs(vel.y) < 0.005) {
-            player.applyLinearImpulse(0, 4f, pos.x, pos.y, true);
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             playerData.setCharacterState(Character.CharacterState.JUMPING);
+            if( vel.y < MAX_VELOCITY.y && Math.abs(vel.y) < 0.005)
+                player.applyLinearImpulse(0, 4f, pos.x, pos.y, true);
         }
+
 
     }
     private void renderEntity(Body item,float deltaTime){
