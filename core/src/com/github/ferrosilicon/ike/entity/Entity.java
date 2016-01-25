@@ -4,9 +4,6 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-/**
- * Created by KrithikR on 1/23/16.
- */
 public abstract class Entity {
     public Entity(Vector2 dimensions){
         dimension = dimensions;
