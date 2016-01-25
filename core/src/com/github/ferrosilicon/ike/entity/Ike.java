@@ -8,6 +8,8 @@ public final class Ike extends Character {
     // Stores the Character Dimensions
     private final static Vector2 dimension = new Vector2(32, 32);
 
+    public boolean grounded = false;
+
     // Constructor for Ike :D
     public Ike(CharacterTextureSet textureSet) {
         super(dimension, textureSet, DirectionState.RIGHT, CharacterState.STANDING);

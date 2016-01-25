@@ -4,6 +4,7 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
+import com.github.ferrosilicon.ike.entity.Ike;
 
 final class WorldContactListener implements ContactListener {
 
@@ -11,10 +12,17 @@ final class WorldContactListener implements ContactListener {
     public void beginContact(final Contact contact) {
         if (contact.getWorldManifold().getNormal().x != 0.0)
             contact.setFriction(0);
+
+        final Ike ike = getIke(contact);
+        if (contact.getWorldManifold().getNormal().y > 0 && ike != null)
+            ike.grounded = true;
     }
 
     @Override
-    public void endContact(Contact contact) {
+    public void endContact(final Contact contact) {
+        final Ike ike = getIke(contact);
+        if (contact.getWorldManifold().getNormal().y == 0 && ike != null)
+            ike.grounded = false;
     }
 
     @Override
@@ -23,5 +31,13 @@ final class WorldContactListener implements ContactListener {
 
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
+    }
+
+    private static Ike getIke(final Contact contact) {
+        final Object userDataA = contact.getFixtureA().getBody().getUserData();
+        if (userDataA != null && userDataA instanceof Ike)
+            return (Ike) userDataA;
+        final Object userDataB = contact.getFixtureB().getBody().getUserData();
+        return userDataB != null && userDataB instanceof Ike ? (Ike) userDataB : null;
     }
 }

@@ -68,13 +68,10 @@ public final class GameScreen extends ScreenAdapter {
             if (vel.x < MAX_VELOCITY.x)
                 player.applyLinearImpulse(0.80f, 0, pos.x, pos.y, true);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.W) && vel.y < MAX_VELOCITY.y && playerData.grounded) {
             playerData.setCharacterState(Character.CharacterState.JUMPING);
-            if (vel.y < MAX_VELOCITY.y && Math.abs(vel.y) < 0.005)
-                player.applyLinearImpulse(0, 4f, pos.x, pos.y, true);
+            player.applyLinearImpulse(0, 4f, pos.x, pos.y, true);
         }
-
-
     }
 
     private void renderEntity(Body item, float deltaTime) {
