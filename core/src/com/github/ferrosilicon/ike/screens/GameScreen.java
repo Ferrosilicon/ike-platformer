@@ -43,7 +43,7 @@ public final class GameScreen extends ScreenAdapter {
                 camera.viewportWidth / 2f, worldManager.mapWidth - (camera.viewportWidth / 2f));
         camera.update();
         worldManager.render(camera);
-        renderEntity( worldManager.player , deltaTime );
+        renderEntity(worldManager.player, deltaTime);
         updateInput();
         worldManager.step(deltaTime, camera);
     }
@@ -59,32 +59,32 @@ public final class GameScreen extends ScreenAdapter {
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             playerData.setCharacterState(Character.CharacterState.RUNNING);
             playerData.directionState = Entity.DirectionState.LEFT;
-            if( vel.x > -MAX_VELOCITY.x)
+            if (vel.x > -MAX_VELOCITY.x)
                 player.applyLinearImpulse(-0.80f, 0, pos.x, pos.y, true);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             playerData.setCharacterState(Character.CharacterState.RUNNING);
             playerData.directionState = Entity.DirectionState.RIGHT;
-            if( vel.x < MAX_VELOCITY.x)
+            if (vel.x < MAX_VELOCITY.x)
                 player.applyLinearImpulse(0.80f, 0, pos.x, pos.y, true);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             playerData.setCharacterState(Character.CharacterState.JUMPING);
-            if( vel.y < MAX_VELOCITY.y && Math.abs(vel.y) < 0.005)
+            if (vel.y < MAX_VELOCITY.y && Math.abs(vel.y) < 0.005)
                 player.applyLinearImpulse(0, 4f, pos.x, pos.y, true);
         }
 
 
     }
-    private void renderEntity(Body item,float deltaTime){
+
+    private void renderEntity(Body item, float deltaTime) {
         Entity entity = (Entity) item.getUserData();
-        Vector2 entityPos = entity.getPixelPosition( item.getPosition() , camera, worldManager.mapTileSize);
+        Vector2 entityPos = entity.getPixelPosition(item.getPosition(), camera, worldManager.mapTileSize);
 
         game.batch.begin();
-        game.batch.draw(entity.getCurrentSprite(deltaTime),entityPos.x,entityPos.y,(int)entity.dimension.x,(int)entity.dimension.y);
+        game.batch.draw(entity.getCurrentSprite(deltaTime), entityPos.x, entityPos.y, (int) entity.dimension.x, (int) entity.dimension.y);
         game.batch.end();
     }
-
 
 
     @Override

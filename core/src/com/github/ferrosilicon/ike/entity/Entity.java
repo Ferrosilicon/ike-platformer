@@ -5,10 +5,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class Entity {
-    public Entity(Vector2 dimensions){
+    public Vector2 dimension;
+
+    public Entity(Vector2 dimensions) {
         dimension = dimensions;
     }
-    public Vector2 dimension;
+
     /*
     Returns the appropriate sprite to render
     */
@@ -22,12 +24,13 @@ public abstract class Entity {
     /*
     Returns the true position ( pixels ) relative to the screen size.
      */
-    public Vector2 getPixelPosition(Vector2 entityPos, Camera camera , int mapTileSize){
+    public Vector2 getPixelPosition(Vector2 entityPos, Camera camera, int mapTileSize) {
         return new Vector2(
-                ((entityPos.x - camera.position.x + camera.viewportWidth/2) * mapTileSize * 2) - dimension.x/2 ,        // X Coordinate Change ...
-                ((entityPos.y - camera.position.y + camera.viewportHeight/2) * mapTileSize * 2) - dimension.y/2);    // Y Coordinate Change
+                ((entityPos.x - camera.position.x + camera.viewportWidth / 2) * mapTileSize * 2) - dimension.x / 2,        // X Coordinate Change ...
+                ((entityPos.y - camera.position.y + camera.viewportHeight / 2) * mapTileSize * 2) - dimension.y / 2);    // Y Coordinate Change
     }
-    public enum DirectionState{
-        LEFT,RIGHT
+
+    public enum DirectionState {
+        LEFT, RIGHT
     }
 }

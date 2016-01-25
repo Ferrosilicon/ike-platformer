@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.CharArray;
 
 public class ExtendedTexture {
     private final Texture texture;
@@ -24,7 +23,7 @@ public class ExtendedTexture {
     Arguments include:
     Image Path , Number of Frames in the Sheet , the Dimensions of Each Sprite , and The Time to Render the Sheet
      */
-    public ExtendedTexture(String imgPath,int numberOfFrames,Vector2 spriteDimension,float rendTime) {
+    public ExtendedTexture(String imgPath, int numberOfFrames, Vector2 spriteDimension, float rendTime) {
         texture = new Texture(Gdx.files.internal(imgPath));
         frames = numberOfFrames;
         dimension = spriteDimension;
@@ -59,23 +58,22 @@ public class ExtendedTexture {
         }
 
         //  Checks to see Wether the Current Frame is Equal to The Total Number of Frames,
-        if (renderFrame == frames){
+        if (renderFrame == frames) {
             renderFrame--;
             rendering = false;
         }
 
         // Creates a Region of Texture
-        TextureRegion outputTexture = new TextureRegion(texture,renderFrame*(int)dimension.x,0,(int)dimension.x,(int)dimension.y);
-        outputTexture.flip(directionModifier,false);
+        TextureRegion outputTexture = new TextureRegion(texture, renderFrame * (int) dimension.x, 0, (int) dimension.x, (int) dimension.y);
+        outputTexture.flip(directionModifier, false);
 
         // Checks if Done Rendering + Resets the Render Time Counter
-        if(!rendering)
+        if (!rendering)
             renderProgress = 0;
 
         // Returns Texture to Render
         return outputTexture;
     }
-
 
 
 }
