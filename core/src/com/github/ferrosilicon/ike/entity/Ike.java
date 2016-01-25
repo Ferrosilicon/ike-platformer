@@ -12,7 +12,6 @@ public final class Ike extends Character{
     }
 
     public TextureRegion getCurrentSprite(float deltaTime){
-        System.out.print(characterState);
         return super.getCurrentSprite(deltaTime);
     }
 

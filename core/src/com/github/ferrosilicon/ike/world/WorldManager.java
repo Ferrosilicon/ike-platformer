@@ -43,6 +43,7 @@ public final class WorldManager implements Disposable {
         // Create a new world instance with the specified gravity and with body sleeping enabled
         // Body sleeping saves CPU on bodies that have no forces acting upon them
         world = new World(new Vector2(0, -9.80665f), true);
+        world.setContactListener(new WorldContactListener());
         debugRenderer = new Box2DDebugRenderer();
 
         map = new TmxMapLoader(new InternalFileHandleResolver()).load(level);
@@ -94,7 +95,7 @@ public final class WorldManager implements Disposable {
         // Gives the definition the shape we created
         fixtureDef.shape = groundBox;
         // Gives the definition a friction value of 0.3. The value should be between 0 and 1
-        fixtureDef.friction = 0.3f;
+        fixtureDef.friction = 20f;
         fixtureDef.density = 0.5f;
         // Creates a new fixture with the fixture definition
         body.createFixture(fixtureDef);

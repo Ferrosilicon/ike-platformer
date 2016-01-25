@@ -54,8 +54,6 @@ public final class GameScreen extends ScreenAdapter {
         final Vector2 vel = player.getLinearVelocity();
         final Vector2 pos = player.getPosition();
 
-        System.out.println(vel);
-
         playerData.setCharacterState(Character.CharacterState.STANDING);
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
