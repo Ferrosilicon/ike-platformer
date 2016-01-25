@@ -75,7 +75,7 @@ public class ExtendedTexture {
         if(!rendering)
             renderProgress = 0;
 
-
+        // Returns Texture to Render
         return outputTexture;
     }
 

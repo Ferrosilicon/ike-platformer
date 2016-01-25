@@ -43,7 +43,7 @@ public final class WorldManager implements Disposable {
         // Create a new world instance with the specified gravity and with body sleeping enabled
         // Body sleeping saves CPU on bodies that have no forces acting upon them
         world = new World(new Vector2(0, -9.80665f), true);
-        World.setVelocityThreshold(1.0f);
+        World.setVelocityThreshold(0.0f);
         debugRenderer = new Box2DDebugRenderer();
 
         map = new TmxMapLoader(new InternalFileHandleResolver()).load(level);
@@ -89,12 +89,14 @@ public final class WorldManager implements Disposable {
         final PolygonShape groundBox = new PolygonShape();
         // Create a 1x1 unit rectangle, as the parameters are half of the actual values. (1/2 = 1)
         // One unit = WorldManager.mapTileSize;
-        groundBox.setAsBox(0.5f, 0.5f);
+
+        groundBox.setAsBox((Ike.DIMENSION.x/mapTileSize)/4, (Ike.DIMENSION.x/mapTileSize)/4);
 
         // Creates a new definition for the fixture
         final FixtureDef fixtureDef = new FixtureDef();
         // Gives the definition the shape we created
         fixtureDef.shape = groundBox;
+        // Gives the definition a restitution ( bounciness ) of 0
         fixtureDef.restitution = 0.0f;
         // Gives the definition a friction value of 0.3. The value should be between 0 and 1
         fixtureDef.friction = 0.3f;
@@ -105,11 +107,13 @@ public final class WorldManager implements Disposable {
 
         // A fixture was already created with the shape, so the shape can now be removed from mem
         groundBox.dispose();
+
+        // Creates the Texture Set for Ike
         CharacterTextureSet ikeTextures = new CharacterTextureSet();
         ikeTextures.standingTexture = new ExtendedTexture("IkeStatic.png",1,new Vector2(64,64),0.1f);
         ikeTextures.walkingTexture = new ExtendedTexture("minion_death.png",3,new Vector2(32,32),0.9f);
-        // Attaches an object to the body which we can use later. Currently has no use, but later
-        // it will be used to hold things such as the health of the entity
+
+        // Attaches an object to the body which we can use later.
         body.setUserData(new Ike(ikeTextures));
         // Sets the player field to the body we just created for easier access
         player = body;
