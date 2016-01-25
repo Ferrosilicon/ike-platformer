@@ -6,6 +6,9 @@ import com.badlogic.gdx.math.Vector2;
 
 public final class Ike extends Character{
     private final static Vector2 dimension = new Vector2(32,32);
+    public Vector2 lastPos = new Vector2(0,0);
+    public Vector2 wallHitCount = new Vector2(0,0);
+    public boolean skipImpulse = false;
     public Ike(CharacterTextureSet textureSet){
         super(dimension,textureSet,DirectionState.RIGHT,CharacterState.STANDING);
         currentSpriteSet = textureSet.standingTexture;

@@ -43,6 +43,7 @@ public final class WorldManager implements Disposable {
         // Create a new world instance with the specified gravity and with body sleeping enabled
         // Body sleeping saves CPU on bodies that have no forces acting upon them
         world = new World(new Vector2(0, -9.80665f), true);
+        World.setVelocityThreshold(1.0f);
         debugRenderer = new Box2DDebugRenderer();
 
         map = new TmxMapLoader(new InternalFileHandleResolver()).load(level);
@@ -81,6 +82,7 @@ public final class WorldManager implements Disposable {
         // Makes the body unable to rotate, so if you clip the side of a wall the body won't flip
         bodyDef.fixedRotation = true;
 
+
         // Create a new body using the body definition
         final Body body = world.createBody(bodyDef);
         // Creates a new polygon shape to give the body. Other shapes are circle, edge, and chain.
@@ -93,9 +95,11 @@ public final class WorldManager implements Disposable {
         final FixtureDef fixtureDef = new FixtureDef();
         // Gives the definition the shape we created
         fixtureDef.shape = groundBox;
+        fixtureDef.restitution = 0.0f;
         // Gives the definition a friction value of 0.3. The value should be between 0 and 1
         fixtureDef.friction = 0.3f;
         fixtureDef.density = 0.5f;
+
         // Creates a new fixture with the fixture definition
         body.createFixture(fixtureDef);
 

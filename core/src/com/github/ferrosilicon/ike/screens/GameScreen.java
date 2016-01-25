@@ -54,27 +54,70 @@ public final class GameScreen extends ScreenAdapter {
         final Vector2 vel = player.getLinearVelocity();
         final Vector2 pos = player.getPosition();
 
-        System.out.println(vel);
 
         playerData.setCharacterState(Character.CharacterState.STANDING);
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            playerData.wallHitCount.y = 0;
             playerData.setCharacterState(Character.CharacterState.RUNNING);
             playerData.directionState = Entity.DirectionState.LEFT;
-            if( vel.x > -MAX_VELOCITY.x)
+            //System.out.print(vel.x);
+
+            if( vel.x > -MAX_VELOCITY.x && !playerData.skipImpulse )
                 player.applyLinearImpulse(-0.80f, 0, pos.x, pos.y, true);
+            if ((vel.y < 0.0)|(playerData.wallHitCount.x++>3 && vel.y<0.0)
+                    && (player.getLinearVelocity().x == -1.6f || playerData.skipImpulse)
+                    && playerData.lastPos.x-player.getPosition().x == 0)
+            {
+                System.out.print("ya");
+                player.setLinearVelocity(0, vel.y);
+                playerData.skipImpulse = true;
+            }else {
+                playerData.skipImpulse = false;
+                playerData.wallHitCount.set(0,0);
+            }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            playerData.wallHitCount.x = 0;
+
             playerData.setCharacterState(Character.CharacterState.RUNNING);
             playerData.directionState = Entity.DirectionState.RIGHT;
-            if( vel.x < MAX_VELOCITY.x)
+
+
+            if (vel.x < MAX_VELOCITY.x && !playerData.skipImpulse)
                 player.applyLinearImpulse(0.80f, 0, pos.x, pos.y, true);
+            if (((vel.y < 0.0)|(playerData.wallHitCount.y++>3 && vel.y<0.1))
+                    && (player.getLinearVelocity().x == 1.6f || playerData.skipImpulse)
+                    && playerData.lastPos.x-player.getPosition().x == 0)
+            {
+                System.out.print("ya");
+                player.setLinearVelocity(0, vel.y);
+                playerData.skipImpulse = true;
+
+                if(playerData.wallHitCount.y>10){
+                    playerData.wallHitCount.y = 0;
+                }
+            }else {
+                playerData.skipImpulse = false;
+                playerData.wallHitCount.set(0,0);
+            }
+
+
+
+
         }
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             playerData.setCharacterState(Character.CharacterState.JUMPING);
             if( vel.y < MAX_VELOCITY.y && Math.abs(vel.y) < 0.005)
                 player.applyLinearImpulse(0, 4f, pos.x, pos.y, true);
+
         }
+        if(player.getLinearVelocity().x == 0 && player.getLinearVelocity().y == 0)
+            playerData.wallHitCount.set(0,0);
+
+        playerData.lastPos = player.getPosition();
+        System.out.println(player.getLinearVelocity()+ ":" + player.getPosition().x);
+
 
 
     }
