@@ -21,7 +21,7 @@ final class WorldContactListener implements ContactListener {
     @Override
     public void endContact(final Contact contact) {
         final Ike ike = getIke(contact);
-        if (contact.getWorldManifold().getNormal().y == 0 && ike != null)
+        if (contact.getWorldManifold().getNormal().y >= 0 && ike != null)
             ike.grounded = false;
     }
 
