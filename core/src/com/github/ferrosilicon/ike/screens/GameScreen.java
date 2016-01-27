@@ -7,7 +7,9 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.github.ferrosilicon.ike.IkeGame;
 import com.github.ferrosilicon.ike.entity.Entity;
@@ -83,6 +85,18 @@ public final class GameScreen extends ScreenAdapter {
 
     private class ControlListener extends InputAdapter {
 
+        private final Rectangle leftHalf;
+
+        private int walkPointer = -1, jumpPointer = -1;
+        public Vector3 originVector;
+        public Vector2 currentVector;
+
+        ControlListener() {
+            final float height = Gdx.graphics.getHeight();
+            final float halfWidth = Gdx.graphics.getWidth() / 2;
+            leftHalf = new Rectangle(0, 0, halfWidth, height);
+        }
+
         @Override
         public boolean keyDown(final int keyCode) {
             if (keyCode == Input.Keys.A) {
@@ -93,8 +107,7 @@ public final class GameScreen extends ScreenAdapter {
                 ike.movingRight = true;
                 return true;
             }
-            if (keyCode == Input.Keys.W && ikeBody.getLinearVelocity().y < MAX_VELOCITY.y
-                    && ike.grounded) {
+            if (keyCode == Input.Keys.W) {
                 jump();
                 return true;
             }
@@ -114,9 +127,53 @@ public final class GameScreen extends ScreenAdapter {
             return false;
         }
 
+        @Override
+        public boolean touchDown(final int screenX, final int screenY, final int pointer,
+                                 final int button) {
+            if (leftHalf.contains(screenX, screenY)) {
+                walkPointer = pointer;
+                originVector = new Vector3(screenX, screenY, 0);
+                currentVector = new Vector2(screenX, screenY);
+            } else {
+                jumpPointer = pointer;
+                jump();
+            }
+            return true;
+        }
+
+        @Override
+        public boolean touchUp(final int screenX, final int screenY, final int pointer,
+                               final int button) {
+            if (walkPointer == pointer) {
+                ike.movingLeft = false;
+                ike.movingRight = false;
+                originVector = null;
+                currentVector = null;
+                walkPointer = -1;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean touchDragged(final int screenX, final int screenY, final int pointer) {
+            if (walkPointer == pointer) {
+                currentVector.x = screenX;
+                currentVector.y = screenY;
+                final float xDif = originVector.x - currentVector.x;
+                final boolean distance = Math.abs(xDif) > 50;
+                ike.movingLeft = distance && xDif > 0;
+                ike.movingRight = distance && xDif < 0;
+                return true;
+            }
+            return false;
+        }
+
         private void jump() {
-            ikeBody.applyLinearImpulse(0, 4f, ikeBody.getPosition().x, ikeBody.getPosition().y,
-                    true);
+            if (ikeBody.getLinearVelocity().y < MAX_VELOCITY.y
+                    && ike.grounded)
+                ikeBody.applyLinearImpulse(0, 4f, ikeBody.getPosition().x, ikeBody.getPosition().y,
+                        true);
         }
     }
 }
