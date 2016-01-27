@@ -151,6 +151,7 @@ public final class GameScreen extends ScreenAdapter {
                 originVector = null;
                 currentVector = null;
                 walkPointer = -1;
+                jumpPointer = -1;
                 return true;
             }
             return false;
