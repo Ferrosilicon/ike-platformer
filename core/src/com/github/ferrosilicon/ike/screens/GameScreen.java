@@ -91,6 +91,10 @@ public final class GameScreen extends ScreenAdapter {
 
     private class ControlListener extends InputAdapter {
 
+        private static final int MIN_X_DISTANCE = 100;
+        private static final int ORIGIN_MAX_DISTANCE = 300;
+        private static final int ORIGIN_UPDATE_DISTANCE = 150;
+
         private final float halfWidth = Gdx.graphics.getWidth() / 2;
         private int walkPointer = -1, jumpPointer = -1;
 
@@ -158,12 +162,12 @@ public final class GameScreen extends ScreenAdapter {
                 currentVector.x = screenX;
                 currentVector.y = screenY;
                 final float xDif = originVector.x - currentVector.x;
-                final boolean distance = Math.abs(xDif) > 100;
-                if (originVector.dst(currentVector) > 300) {
+                final boolean distance = Math.abs(xDif) > MIN_X_DISTANCE;
+                if (originVector.dst(currentVector) > ORIGIN_MAX_DISTANCE) {
                     final float angle = MathUtils.atan2(originVector.y - screenY,
                             originVector.x - screenX);
-                    originVector.x -= MathUtils.cos(angle) * 150;
-                    originVector.y -= MathUtils.sin(angle) * 150;
+                    originVector.x -= MathUtils.cos(angle) * ORIGIN_UPDATE_DISTANCE;
+                    originVector.y -= MathUtils.sin(angle) * ORIGIN_UPDATE_DISTANCE;
                 }
 
                 ike.movingLeft = distance && xDif > 0;
