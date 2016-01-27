@@ -33,6 +33,8 @@ public final class GameScreen extends ScreenAdapter {
 
     private final Texture finger1, finger2;
 
+    private int halfWidth;
+
     public GameScreen(final IkeGame game) {
         this.game = game;
 
@@ -62,6 +64,15 @@ public final class GameScreen extends ScreenAdapter {
         renderEntity(worldManager.player, deltaTime);
         updateInput();
         worldManager.step(deltaTime, camera);
+
+        if (originVector != null) {
+            game.batch.begin();
+            game.batch.draw(finger1, originVector.x, Gdx.graphics.getHeight() - originVector.y,
+                    50, 50);
+            game.batch.draw(finger2, currentVector.x, Gdx.graphics.getHeight() - currentVector.y,
+                    50, 50);
+            game.batch.end();
+        }
     }
 
     private void updateInput() {
@@ -83,6 +94,10 @@ public final class GameScreen extends ScreenAdapter {
         game.batch.end();
     }
 
+    @Override
+    public void resize(final int width, final int height) {
+        halfWidth = width / 2;
+    }
 
     @Override
     public void dispose() {
@@ -95,7 +110,6 @@ public final class GameScreen extends ScreenAdapter {
         private static final int ORIGIN_MAX_DISTANCE = 300;
         private static final int ORIGIN_UPDATE_DISTANCE = 150;
 
-        private final float halfWidth = Gdx.graphics.getWidth() / 2;
         private int walkPointer = -1, jumpPointer = -1;
 
         @Override
