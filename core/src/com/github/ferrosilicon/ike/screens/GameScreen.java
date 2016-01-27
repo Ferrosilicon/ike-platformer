@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -28,6 +29,10 @@ public final class GameScreen extends ScreenAdapter {
     private final Body ikeBody;
     private final Ike ike;
 
+    public Vector3 originVector, currentVector;
+
+    private final Texture finger1, finger2;
+
     public GameScreen(final IkeGame game) {
         this.game = game;
 
@@ -40,6 +45,9 @@ public final class GameScreen extends ScreenAdapter {
         camera.setToOrtho(false, Gdx.graphics.getWidth() / worldManager.mapTileSize / 2,
                 Gdx.graphics.getHeight() / worldManager.mapTileSize / 2);
         camera.update();
+
+        finger1 = new Texture(Gdx.files.internal("finger1.png"));
+        finger2 = new Texture(Gdx.files.internal("finger2.png"));
 
         Gdx.input.setInputProcessor(new ControlListener());
     }
@@ -86,8 +94,6 @@ public final class GameScreen extends ScreenAdapter {
 
         private final float halfWidth = Gdx.graphics.getWidth() / 2;
         private int walkPointer = -1, jumpPointer = -1;
-        public Vector3 originVector;
-        public Vector2 currentVector;
 
         @Override
         public boolean keyDown(final int keyCode) {
@@ -125,7 +131,7 @@ public final class GameScreen extends ScreenAdapter {
             if (halfWidth > screenX) {
                 walkPointer = pointer;
                 originVector = new Vector3(screenX, screenY, 0);
-                currentVector = new Vector2(screenX, screenY);
+                currentVector = new Vector3(screenX, screenY, 0);
             } else {
                 jumpPointer = pointer;
                 jump();
@@ -154,6 +160,13 @@ public final class GameScreen extends ScreenAdapter {
                 currentVector.y = screenY;
                 final float xDif = originVector.x - currentVector.x;
                 final boolean distance = Math.abs(xDif) > 50;
+                if (originVector.dst(currentVector) > 150) {
+                    final float angle = MathUtils.atan2(originVector.y - screenY,
+                            originVector.x - screenX);
+                    originVector.x -= MathUtils.cos(angle) * 75;
+                    originVector.y -= MathUtils.sin(angle) * 75;
+                }
+
                 ike.movingLeft = distance && xDif > 0;
                 ike.movingRight = distance && xDif < 0;
                 return true;
@@ -162,8 +175,7 @@ public final class GameScreen extends ScreenAdapter {
         }
 
         private void jump() {
-            if (ikeBody.getLinearVelocity().y < MAX_VELOCITY.y
-                    && ike.grounded)
+            if (ikeBody.getLinearVelocity().y < MAX_VELOCITY.y && ike.grounded)
                 ikeBody.applyLinearImpulse(0, 4f, ikeBody.getPosition().x, ikeBody.getPosition().y,
                         true);
         }
