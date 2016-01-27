@@ -42,8 +42,7 @@ public final class GameScreen extends ScreenAdapter {
         ike = (Ike) ikeBody.getUserData();
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth() / worldManager.mapTileSize / 2,
-                Gdx.graphics.getHeight() / worldManager.mapTileSize / 2);
+        camera.setToOrtho(false, 32, 18);
         camera.update();
 
         finger1 = new Texture(Gdx.files.internal("finger1.png"));
@@ -159,12 +158,12 @@ public final class GameScreen extends ScreenAdapter {
                 currentVector.x = screenX;
                 currentVector.y = screenY;
                 final float xDif = originVector.x - currentVector.x;
-                final boolean distance = Math.abs(xDif) > 50;
-                if (originVector.dst(currentVector) > 150) {
+                final boolean distance = Math.abs(xDif) > 100;
+                if (originVector.dst(currentVector) > 300) {
                     final float angle = MathUtils.atan2(originVector.y - screenY,
                             originVector.x - screenX);
-                    originVector.x -= MathUtils.cos(angle) * 75;
-                    originVector.y -= MathUtils.sin(angle) * 75;
+                    originVector.x -= MathUtils.cos(angle) * 150;
+                    originVector.y -= MathUtils.sin(angle) * 150;
                 }
 
                 ike.movingLeft = distance && xDif > 0;
