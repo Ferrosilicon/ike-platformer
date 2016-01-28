@@ -25,7 +25,6 @@ public final class GameScreen extends ScreenAdapter {
     private final WorldManager worldManager;
     private final OrthographicCamera camera;
 
-    // TODO: find out if body velocity and position references save, and if not short them
     private final Body ikeBody;
     private final Ike ike;
 
