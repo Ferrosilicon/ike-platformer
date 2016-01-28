@@ -6,8 +6,8 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -28,6 +28,12 @@ public final class GameScreen extends ScreenAdapter {
     private final Body ikeBody;
     private final Ike ike;
 
+    public Vector3 originVector, currentVector;
+
+    private int halfWidth;
+
+    private final ShapeRenderer shapeRenderer;
+
     public GameScreen(final IkeGame game) {
         this.game = game;
 
@@ -37,9 +43,10 @@ public final class GameScreen extends ScreenAdapter {
         ike = (Ike) ikeBody.getUserData();
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, Gdx.graphics.getWidth() / worldManager.mapTileSize / 2,
-                Gdx.graphics.getHeight() / worldManager.mapTileSize / 2);
+        camera.setToOrtho(false, 32, 18);
         camera.update();
+
+        shapeRenderer = new ShapeRenderer();
 
         Gdx.input.setInputProcessor(new ControlListener());
     }
@@ -55,6 +62,23 @@ public final class GameScreen extends ScreenAdapter {
         renderEntity(worldManager.player, deltaTime);
         updateInput();
         worldManager.step(deltaTime, camera);
+
+        if (originVector != null) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(0.5f, 0.5f, 0, 0.5f);
+            shapeRenderer.line(originVector.x - ControlListener.MIN_X_DISTANCE, 0,
+                    originVector.x - ControlListener.MIN_X_DISTANCE, Gdx.graphics.getHeight());
+            shapeRenderer.line(originVector.x + ControlListener.MIN_X_DISTANCE, 0,
+                    originVector.x + ControlListener.MIN_X_DISTANCE, Gdx.graphics.getHeight());
+            shapeRenderer.setColor(0, 0.5f, 0.5f, 0.5f);
+            shapeRenderer.circle(originVector.x, Gdx.graphics.getHeight() - originVector.y,
+                    ControlListener.ORIGIN_MAX_DISTANCE);
+            shapeRenderer.end();
+            Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        }
     }
 
     private void updateInput() {
@@ -69,11 +93,17 @@ public final class GameScreen extends ScreenAdapter {
 
     private void renderEntity(final Body item, final float deltaTime) {
         final Entity entity = (Entity) item.getUserData();
+
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
         game.batch.draw(entity.getCurrentSprite(deltaTime),
-                item.getPosition().x - 0.5f, item.getPosition().y - 0.5f, 1, 1);
+                +item.getPosition().x - 0.5f, item.getPosition().y - 0.5f, 1, 1);
         game.batch.end();
+    }
+
+    @Override
+    public void resize(final int width, final int height) {
+        halfWidth = width / 2;
     }
 
     @Override
@@ -83,17 +113,11 @@ public final class GameScreen extends ScreenAdapter {
 
     private class ControlListener extends InputAdapter {
 
-        private final Rectangle leftHalf;
+        private static final int MIN_X_DISTANCE = 100;
+        private static final int ORIGIN_MAX_DISTANCE = 300;
+        private static final int ORIGIN_UPDATE_DISTANCE = 150;
 
         private int walkPointer = -1, jumpPointer = -1;
-        public Vector3 originVector;
-        public Vector2 currentVector;
-
-        ControlListener() {
-            final float height = Gdx.graphics.getHeight();
-            final float halfWidth = Gdx.graphics.getWidth() / 2;
-            leftHalf = new Rectangle(0, 0, halfWidth, height);
-        }
 
         @Override
         public boolean keyDown(final int keyCode) {
@@ -128,10 +152,10 @@ public final class GameScreen extends ScreenAdapter {
         @Override
         public boolean touchDown(final int screenX, final int screenY, final int pointer,
                                  final int button) {
-            if (leftHalf.contains(screenX, screenY)) {
+            if (halfWidth > screenX) {
                 walkPointer = pointer;
                 originVector = new Vector3(screenX, screenY, 0);
-                currentVector = new Vector2(screenX, screenY);
+                currentVector = new Vector3(screenX, screenY, 0);
             } else {
                 jumpPointer = pointer;
                 jump();
@@ -148,6 +172,7 @@ public final class GameScreen extends ScreenAdapter {
                 originVector = null;
                 currentVector = null;
                 walkPointer = -1;
+                jumpPointer = -1;
                 return true;
             }
             return false;
@@ -159,7 +184,14 @@ public final class GameScreen extends ScreenAdapter {
                 currentVector.x = screenX;
                 currentVector.y = screenY;
                 final float xDif = originVector.x - currentVector.x;
-                final boolean distance = Math.abs(xDif) > 50;
+                final boolean distance = Math.abs(xDif) > MIN_X_DISTANCE;
+                if (originVector.dst(currentVector) > ORIGIN_MAX_DISTANCE) {
+                    final float angle = MathUtils.atan2(originVector.y - screenY,
+                            originVector.x - screenX);
+                    originVector.x -= MathUtils.cos(angle) * ORIGIN_UPDATE_DISTANCE;
+                    originVector.y -= MathUtils.sin(angle) * ORIGIN_UPDATE_DISTANCE;
+                }
+
                 ike.movingLeft = distance && xDif > 0;
                 ike.movingRight = distance && xDif < 0;
                 return true;
@@ -168,8 +200,7 @@ public final class GameScreen extends ScreenAdapter {
         }
 
         private void jump() {
-            if (ikeBody.getLinearVelocity().y < MAX_VELOCITY.y
-                    && ike.grounded)
+            if (ikeBody.getLinearVelocity().y < MAX_VELOCITY.y && ike.grounded)
                 ikeBody.applyLinearImpulse(0, 4f, ikeBody.getPosition().x, ikeBody.getPosition().y,
                         true);
         }

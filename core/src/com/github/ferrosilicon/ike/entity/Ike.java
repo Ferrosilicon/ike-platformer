@@ -24,15 +24,15 @@ public final class Ike extends Character {
     @Override
     public CharacterState getCharacterState() {
         /*
-        If you don't know what a ternary is or the binary bitwise operators this may look a bit
-        confusing, but it's the same thing as:
-        if (!grounded)
-            return CharacterState.JUMPING;
-        else if (movingLeft && !movingRight || !movingLeft && movingRight)
-            return CharacterState.RUNNING;
-        else
-            return CharacterState.STANDING;
-         */
+ +        If you don't know what a ternary is or the binary bitwise operators this may look a bit
+ +        confusing, but it's the same thing as:
+ +        if (!grounded)
+ +            return CharacterState.JUMPING;
+ +        else if (movingLeft && !movingRight || !movingLeft && movingRight)
+ +            return CharacterState.RUNNING;
+ +        else
+ +            return CharacterState.STANDING;
+ +         */
         return !grounded ? CharacterState.JUMPING : movingLeft ^ movingRight
                 ? CharacterState.RUNNING : CharacterState.STANDING;
     }
