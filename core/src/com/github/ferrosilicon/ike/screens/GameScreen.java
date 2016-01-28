@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.github.ferrosilicon.ike.IkeGame;
 import com.github.ferrosilicon.ike.entity.Entity;
@@ -28,7 +27,7 @@ public final class GameScreen extends ScreenAdapter {
     private final Body ikeBody;
     private final Ike ike;
 
-    public Vector3 originVector, currentVector;
+    public Vector2 originVector, currentVector;
 
     private int halfWidth;
 
@@ -154,8 +153,8 @@ public final class GameScreen extends ScreenAdapter {
                                  final int button) {
             if (halfWidth > screenX) {
                 walkPointer = pointer;
-                originVector = new Vector3(screenX, screenY, 0);
-                currentVector = new Vector3(screenX, screenY, 0);
+                originVector = new Vector2(screenX, screenY);
+                currentVector = new Vector2(screenX, screenY);
             } else {
                 jumpPointer = pointer;
                 jump();
