@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.github.ferrosilicon.ike.IkeGame;
-import com.github.ferrosilicon.ike.entity.Entity;
 import com.github.ferrosilicon.ike.entity.Ike;
 import com.github.ferrosilicon.ike.world.WorldManager;
 
@@ -57,10 +56,9 @@ public final class GameScreen extends ScreenAdapter {
         camera.position.x = MathUtils.clamp(worldManager.player.getPosition().x,
                 camera.viewportWidth / 2f, worldManager.mapWidth - (camera.viewportWidth / 2f));
         camera.update();
-        worldManager.render(camera);
-        renderEntity(worldManager.player, deltaTime);
+        worldManager.render(game.batch, camera, deltaTime);
         updateInput();
-        worldManager.step(deltaTime, camera);
+        worldManager.step(deltaTime);
 
         if (originVector != null) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -88,16 +86,6 @@ public final class GameScreen extends ScreenAdapter {
             ikeBody.applyLinearImpulse(-0.80f, 0, pos.x, pos.y, true);
         if (ike.movingRight && vel.x < MAX_VELOCITY.x)
             ikeBody.applyLinearImpulse(0.80f, 0, pos.x, pos.y, true);
-    }
-
-    private void renderEntity(final Body item, final float deltaTime) {
-        final Entity entity = (Entity) item.getUserData();
-
-        game.batch.setProjectionMatrix(camera.combined);
-        game.batch.begin();
-        game.batch.draw(entity.getCurrentSprite(deltaTime),
-                +item.getPosition().x - 0.5f, item.getPosition().y - 0.5f, 1, 1);
-        game.batch.end();
     }
 
     @Override

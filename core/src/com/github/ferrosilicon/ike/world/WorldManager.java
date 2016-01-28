@@ -2,6 +2,7 @@ package com.github.ferrosilicon.ike.world;
 
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -12,8 +13,10 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.github.ferrosilicon.ike.entity.CharacterTextureSet;
+import com.github.ferrosilicon.ike.entity.Entity;
 import com.github.ferrosilicon.ike.entity.ExtendedTexture;
 import com.github.ferrosilicon.ike.entity.Ike;
 import com.github.ferrosilicon.ike.world.util.WorldBuilder;
@@ -56,15 +59,32 @@ public final class WorldManager implements Disposable {
         WorldBuilder.buildShapes(map, mapTileSize, world);
     }
 
-    public void render(final OrthographicCamera camera) {
+    private Array<Body> bodies = new Array<Body>();
+
+    public void render(final SpriteBatch batch, final OrthographicCamera camera,
+                       final float deltaTime) {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
+
+        world.getBodies(bodies);
+        batch.begin();
+        for (final Body body : bodies)
+            if (body.getUserData() instanceof Entity)
+                renderEntity(batch, camera, body, deltaTime);
+        batch.end();
+
+        debugRenderer.render(world, camera.combined);
+    }
+
+    private void renderEntity(final SpriteBatch batch, final OrthographicCamera camera,
+                              final Body body, final float deltaTime) {
+        batch.setProjectionMatrix(camera.combined);
+        batch.draw(((Entity) body.getUserData()).getCurrentSprite(deltaTime),
+                body.getPosition().x - 0.5f, body.getPosition().y - 0.5f, 1, 1);
     }
 
     // All you need to know about this is that it updates the Box2d world. Don't worry about how
-    public void step(final float deltaTime, final OrthographicCamera camera) {
-        debugRenderer.render(world, camera.combined);
-
+    public void step(final float deltaTime) {
         stepAccumulator += Math.min(deltaTime, 0.25f);
         while (stepAccumulator >= TIME_STEP) {
             world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
