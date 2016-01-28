@@ -6,7 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -31,9 +31,9 @@ public final class GameScreen extends ScreenAdapter {
 
     public Vector3 originVector, currentVector;
 
-    private final Texture finger1, finger2;
-
     private int halfWidth;
+
+    private final ShapeRenderer shapeRenderer;
 
     public GameScreen(final IkeGame game) {
         this.game = game;
@@ -47,8 +47,7 @@ public final class GameScreen extends ScreenAdapter {
         camera.setToOrtho(false, 32, 18);
         camera.update();
 
-        finger1 = new Texture(Gdx.files.internal("finger1.png"));
-        finger2 = new Texture(Gdx.files.internal("finger2.png"));
+        shapeRenderer = new ShapeRenderer();
 
         Gdx.input.setInputProcessor(new ControlListener());
     }
@@ -66,12 +65,20 @@ public final class GameScreen extends ScreenAdapter {
         worldManager.step(deltaTime, camera);
 
         if (originVector != null) {
-            game.batch.begin();
-            game.batch.draw(finger1, originVector.x, Gdx.graphics.getHeight() - originVector.y,
-                    50, 50);
-            game.batch.draw(finger2, currentVector.x, Gdx.graphics.getHeight() - currentVector.y,
-                    50, 50);
-            game.batch.end();
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(0.5f, 0.5f, 0, 0.5f);
+            shapeRenderer.line(originVector.x - ControlListener.MIN_X_DISTANCE, 0,
+                    originVector.x - ControlListener.MIN_X_DISTANCE, Gdx.graphics.getHeight());
+            shapeRenderer.line(originVector.x + ControlListener.MIN_X_DISTANCE, 0,
+                    originVector.x + ControlListener.MIN_X_DISTANCE, Gdx.graphics.getHeight());
+            shapeRenderer.setColor(0, 0.5f, 0.5f, 0.5f);
+            shapeRenderer.circle(originVector.x, Gdx.graphics.getHeight() - originVector.y,
+                    ControlListener.ORIGIN_MAX_DISTANCE);
+            shapeRenderer.end();
+            Gdx.gl.glDisable(GL20.GL_BLEND);
+
         }
     }
 
