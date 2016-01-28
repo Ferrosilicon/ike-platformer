@@ -69,13 +69,12 @@ public final class GameScreen extends ScreenAdapter {
 
     private void renderEntity(final Body item, final float deltaTime) {
         final Entity entity = (Entity) item.getUserData();
-        final Vector2 entityPos = entity.getPixelPosition(item.getPosition(), camera, worldManager.mapTileSize);
-
+        game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-        game.batch.draw(entity.getCurrentSprite(deltaTime), entityPos.x, entityPos.y, (int) entity.dimension.x, (int) entity.dimension.y);
+        game.batch.draw(entity.getCurrentSprite(deltaTime),
+                item.getPosition().x - 0.5f, item.getPosition().y - 0.5f, 1, 1);
         game.batch.end();
     }
-
 
     @Override
     public void dispose() {
