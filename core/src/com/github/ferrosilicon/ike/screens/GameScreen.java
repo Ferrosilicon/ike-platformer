@@ -14,52 +14,78 @@ import com.github.ferrosilicon.ike.IkeGame;
 import com.github.ferrosilicon.ike.entity.Ike;
 import com.github.ferrosilicon.ike.world.WorldManager;
 
+// The in-game screen
 public final class GameScreen extends ScreenAdapter {
 
+    // The maximum velocity for movement in the x and y directions
     private static final Vector2 MAX_VELOCITY = new Vector2(3, 5);
 
+    // Instance of the game for the batch rendering
     private final IkeGame game;
 
+    // The world manager which handles the physics and rendering of the world
     private final WorldManager worldManager;
+    // The camera for projecting the renderer
     private final OrthographicCamera camera;
 
+    // Ike's Box2d body
     private final Body ikeBody;
+    // Ike's instance itself, which is attached to the body
     private final Ike ike;
 
-    public Vector2 originVector, currentVector;
 
+    // Variables for sexy mouse movement; it's completed so you don't need to worry about it
+    public Vector2 originVector, currentVector;
     private int halfWidth;
 
+    // A shape renderer. Currently renders the debugging mouse info
     private final ShapeRenderer shapeRenderer;
 
     public GameScreen(final IkeGame game) {
         this.game = game;
 
+        // Creates the world manager with the specified map
         worldManager = new WorldManager("test_map.tmx");
+        // Creates the player at the specified coordinates
         worldManager.createPlayer(1.5f, 5.5f);
+        // Sets this class's ike body instance to the world manager's for convenience
         ikeBody = worldManager.player;
+        // Gets the ike instance from ike's body
         ike = (Ike) ikeBody.getUserData();
 
+        // Creates the camera
         camera = new OrthographicCamera();
+        // Makes the camera render 32 tiles wide and 18 tiles high
         camera.setToOrtho(false, 32, 18);
+        // Updates the camera
         camera.update();
 
+        // Creates the shape renderer
         shapeRenderer = new ShapeRenderer();
 
+        // Sets the input listener
         Gdx.input.setInputProcessor(new ControlListener());
     }
 
     @Override
     public void render(final float deltaTime) {
+        // Sets the clear color
         Gdx.gl.glClearColor(0, 0, 0, 1);
+        // Clears the screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        // Gets the x position of the camera, clamping it if out of bounds
         camera.position.x = MathUtils.clamp(worldManager.player.getPosition().x,
                 camera.viewportWidth / 2f, worldManager.mapWidth - (camera.viewportWidth / 2f));
+        // Updates the camera
         camera.update();
+        // Renders the world
         worldManager.render(game.batch, camera, deltaTime);
+        // Updates the input
         updateInput();
+        // Sets the world (applies the cycle's physics to the bodies)
         worldManager.step(deltaTime);
 
+        // Renders the debugging mouse info, don't worry about it
         if (originVector != null) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -74,10 +100,11 @@ public final class GameScreen extends ScreenAdapter {
                     ControlListener.ORIGIN_MAX_DISTANCE);
             shapeRenderer.end();
             Gdx.gl.glDisable(GL20.GL_BLEND);
-
         }
     }
 
+
+    // Updates the input, moving ike to the corresponding key presses
     private void updateInput() {
         final Vector2 vel = ikeBody.getLinearVelocity();
         final Vector2 pos = ikeBody.getPosition();
@@ -186,6 +213,7 @@ public final class GameScreen extends ScreenAdapter {
             return false;
         }
 
+        // Makes Ike jump if he's on the ground
         private void jump() {
             if (ikeBody.getLinearVelocity().y < MAX_VELOCITY.y && ike.grounded)
                 ikeBody.applyLinearImpulse(0, 4f, ikeBody.getPosition().x, ikeBody.getPosition().y,

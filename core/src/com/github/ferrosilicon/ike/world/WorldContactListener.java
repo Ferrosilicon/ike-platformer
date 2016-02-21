@@ -33,6 +33,7 @@ final class WorldContactListener implements ContactListener {
     public void postSolve(Contact contact, ContactImpulse impulse) {
     }
 
+    // If the one of the two fixtures in the contact event belong to Ike, return the Ike instance
     private static Ike getIke(final Contact contact) {
         final Object userDataA = contact.getFixtureA().getBody().getUserData();
         if (userDataA != null && userDataA instanceof Ike)

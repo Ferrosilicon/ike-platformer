@@ -46,39 +46,57 @@ public final class WorldManager implements Disposable {
         // Create a new world instance with the specified gravity and with body sleeping enabled
         // Body sleeping saves CPU on bodies that have no forces acting upon them
         world = new World(new Vector2(0, -9.80665f), true);
+        // Sets the world contact listener which currently just fixes sticking to walls
         world.setContactListener(new WorldContactListener());
+        // Create a debug renderer to view the boundaries of the Box2d bodies
         debugRenderer = new Box2DDebugRenderer();
 
+        // Load the tiled map
         map = new TmxMapLoader(new InternalFileHandleResolver()).load(level);
+        // Get the size of an individual tile
         mapTileSize = map.getProperties().get("tilewidth", Integer.class);
+        // Gets the width of the map in tiles
         mapWidth = map.getProperties().get("width", Integer.class);
 
+        // Create a tiled map renderer with the map and map's tile size
         tiledMapRenderer = new OrthogonalTiledMapRenderer(map, 1f / mapTileSize);
 
         // Create Box2d bodies to represent the Tiled map
         WorldBuilder.buildShapes(map, mapTileSize, world);
     }
 
+    // A list of all of the boddies in the Box2d world
     private Array<Body> bodies = new Array<Body>();
 
+    // Renders the world to the sprite batch with the camera's projection and specified delta time
     public void render(final SpriteBatch batch, final OrthographicCamera camera,
                        final float deltaTime) {
+        // Projects the renderer to the camera
         tiledMapRenderer.setView(camera);
+        // Renders the map
         tiledMapRenderer.render();
 
+        // Populates the bodies array with the world's bodies
         world.getBodies(bodies);
+        // Begin the batch
         batch.begin();
         for (final Body body : bodies)
+            // If the body belongs to an entity, render it
             if (body.getUserData() instanceof Entity)
                 renderEntity(batch, camera, body, deltaTime);
+        // End the batch
         batch.end();
 
+        // Renders the body outlines
         debugRenderer.render(world, camera.combined);
     }
 
+    // Renders the entity
     private void renderEntity(final SpriteBatch batch, final OrthographicCamera camera,
                               final Body body, final float deltaTime) {
+        // Project the batch with the camera
         batch.setProjectionMatrix(camera.combined);
+        // Gets the current sprite of the entity and draws it. FIXME: hardcoded size
         batch.draw(((Entity) body.getUserData()).getCurrentSprite(deltaTime),
                 body.getPosition().x - 0.5f, body.getPosition().y - 0.5f, 1, 1);
     }
@@ -92,6 +110,7 @@ public final class WorldManager implements Disposable {
         }
     }
 
+    // Creates a player at the specified x and y coordinates
     public void createPlayer(final float x, final float y) {
         // Create a new body definition
         final BodyDef bodyDef = new BodyDef();
@@ -122,8 +141,11 @@ public final class WorldManager implements Disposable {
 
         // A fixture was already created with the shape, so the shape can now be removed from mem
         groundBox.dispose();
+        // Creates a texture set to contain all the texture
         CharacterTextureSet ikeTextures = new CharacterTextureSet();
+        // Creates the standing texture
         ikeTextures.standingTexture = new ExtendedTexture("IkeStatic.png", 1, new Vector2(64, 64), 0.1f);
+        // Creates the wlaking texture
         ikeTextures.walkingTexture = new ExtendedTexture("minion_death.png", 3, new Vector2(32, 32), 0.9f);
         // Attaches an object to the body which we can use later. Currently has no use, but later
         // it will be used to hold things such as the health of the entity

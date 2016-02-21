@@ -19,6 +19,7 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
+// You can completely ignore this class
 public final class WorldBuilder {
 
     public static Array<Body> buildShapes(Map map, float pixels, World world) {
